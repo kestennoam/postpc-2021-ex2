@@ -29,7 +29,7 @@ public class SimpleCalculatorImplTest {
   public void when_inputIsMinus_then_outputShouldBeCorrect(){
     SimpleCalculatorImpl calculatorUnderTest = new SimpleCalculatorImpl();
     calculatorUnderTest.insertMinus();
-    String expected = "???"; // TODO: decide the expected output when having a single minus
+    String expected = "0-";
     assertEquals(expected, calculatorUnderTest.output());
   }
 
@@ -47,12 +47,31 @@ public class SimpleCalculatorImplTest {
 
   @Test
   public void when_callingDeleteLast_then_lastOutputShouldBeDeleted(){
-    // todo: implement test
+    // setup
+    SimpleCalculatorImpl calculatorUnderTest = new SimpleCalculatorImpl();
+    calculatorUnderTest.insertDigit(1);
+    calculatorUnderTest.insertDigit(2);
+    calculatorUnderTest.insertPlus();
+    calculatorUnderTest.insertMinus();
+    assertEquals("12+", calculatorUnderTest.output());
+    // test
+    calculatorUnderTest.deleteLast();
+    // verify
+    assertEquals("12", calculatorUnderTest.output());
+
+
   }
 
   @Test
   public void when_callingClear_then_outputShouldBeCleared(){
-    // todo: implement test
+    // setup
+    SimpleCalculatorImpl calculatorUnderTest = new SimpleCalculatorImpl();
+    calculatorUnderTest.insertDigit(1);
+    calculatorUnderTest.insertDigit(2);
+    // test
+    calculatorUnderTest.clear();
+    // veirfy
+    assertEquals("0", calculatorUnderTest.output());
   }
 
   @Test
@@ -80,9 +99,169 @@ public class SimpleCalculatorImplTest {
   public void when_savingStateFromFirstCalculator_should_loadStateCorrectlyFromSecondCalculator(){
     SimpleCalculatorImpl firstCalculator = new SimpleCalculatorImpl();
     SimpleCalculatorImpl secondCalculator = new SimpleCalculatorImpl();
-    // TODO: implement the test based on this method's name.
-    //  you can get inspiration from the test method `when_savingState_should_loadThatStateCorrectly()`
+    // setup
+    firstCalculator.insertDigit(1);
+    firstCalculator.insertPlus();
+    firstCalculator.insertDigit(2);
+    assertEquals("1+2", firstCalculator.output());
+
+    // save current state
+    Serializable savedState = firstCalculator.saveState();
+    assertNotNull(savedState);
+
+    // test
+    secondCalculator.loadState(savedState);
+
+    // verify
+    assertEquals("1+2", secondCalculator.output());
+
   }
+
+  @Test
+  public void when_inputIsTwicePlusInRow_then_outputShouldBeOnlyOnePlus(){
+    // setup
+    SimpleCalculatorImpl calculatorUnderTest = new SimpleCalculatorImpl();
+    calculatorUnderTest.insertDigit(1);
+    calculatorUnderTest.insertDigit(2);
+
+    // test
+    calculatorUnderTest.insertPlus();
+    calculatorUnderTest.insertPlus();
+
+    // verify
+    assertEquals("12+", calculatorUnderTest.output());
+  }
+
+  @Test
+  public void when_inputIsTwiceMinusInRow_then_outputShouldBeOnlyOneMinus(){
+    // setup
+    SimpleCalculatorImpl calculatorUnderTest = new SimpleCalculatorImpl();
+    calculatorUnderTest.insertDigit(1);
+    calculatorUnderTest.insertDigit(2);
+
+    // test
+    calculatorUnderTest.insertMinus();
+    calculatorUnderTest.insertMinus();
+
+    // verify
+    assertEquals("12-", calculatorUnderTest.output());
+  }
+
+  @Test
+  public void when_inputIsTwiceEquals_then_outputShouldBeSameAsAfterFirstOne(){
+    // setup
+    SimpleCalculatorImpl calculatorUnderTest = new SimpleCalculatorImpl();
+    calculatorUnderTest.insertDigit(1);
+    calculatorUnderTest.insertPlus();
+    calculatorUnderTest.insertDigit(2);
+
+    // test
+    calculatorUnderTest.insertEquals();
+    assertEquals("3", calculatorUnderTest.output());
+    calculatorUnderTest.insertEquals();
+
+    // veirfy
+    assertEquals("3", calculatorUnderTest.output());
+  }
+
+  @Test
+  public void when_inputIsOnlyZero_then_outputShouldBe0(){
+    // setup
+    SimpleCalculatorImpl calculatorUnderTest = new SimpleCalculatorImpl();
+    //test
+    calculatorUnderTest.insertDigit(0);
+    //verify
+    assertEquals("0", calculatorUnderTest.output());
+  }
+
+  @Test
+  public void when_inputIsClearAndPlus_then_outputShouldBe0Plus(){
+    // setup
+    SimpleCalculatorImpl calculatorUnderTest = new SimpleCalculatorImpl();
+    //test
+    calculatorUnderTest.clear();
+    calculatorUnderTest.insertPlus();
+    //verify
+    assertEquals("0+", calculatorUnderTest.output());
+  }
+
+  @Test
+  public void when_inputIsMinusWithNumber_then_outputShouldBeWithZeroAtBeginning(){
+    // setup
+    SimpleCalculatorImpl calculatorUnderTest = new SimpleCalculatorImpl();
+    //test
+    calculatorUnderTest.insertMinus();
+    calculatorUnderTest.insertDigit(2);
+    //verify
+    assertEquals("0-2", calculatorUnderTest.output());
+  }
+
+  @Test
+  public void when_inputIsMinusWithNumberAndEqual_then_outputShouldBeNegative(){
+    // setup
+    SimpleCalculatorImpl calculatorUnderTest = new SimpleCalculatorImpl();
+    //test
+    calculatorUnderTest.insertMinus();
+    calculatorUnderTest.insertDigit(2);
+    calculatorUnderTest.insertEquals();
+    //verify
+    assertEquals("-2", calculatorUnderTest.output());
+  }
+
+  @Test
+  public void when_inputIsNegativeThenPlusGreaterNumber_then_outputShouldBePositive(){
+    // setup
+    SimpleCalculatorImpl calculatorUnderTest = new SimpleCalculatorImpl();
+    calculatorUnderTest.insertMinus();
+    calculatorUnderTest.insertDigit(2);
+    calculatorUnderTest.insertEquals();
+    //test
+    calculatorUnderTest.insertPlus();
+    calculatorUnderTest.insertDigit(3);
+    calculatorUnderTest.insertEquals();
+    //verify
+    assertEquals("1", calculatorUnderTest.output());
+  }
+
+  @Test
+  public void when_inputIsNegativeThenPlusSameNumber_then_outputShouldBeZero(){
+    // setup
+    SimpleCalculatorImpl calculatorUnderTest = new SimpleCalculatorImpl();
+    calculatorUnderTest.insertMinus();
+    calculatorUnderTest.insertDigit(2);
+    calculatorUnderTest.insertEquals();
+    //test
+    calculatorUnderTest.insertPlus();
+    calculatorUnderTest.insertDigit(2);
+    calculatorUnderTest.insertEquals();
+    //verify
+    assertEquals("0", calculatorUnderTest.output());
+  }
+
+  @Test
+  public void when_savingStateFromFirstCalculatorAndClear_should_loadStateCorrectlyFromSecondCalculator(){
+    SimpleCalculatorImpl firstCalculator = new SimpleCalculatorImpl();
+    SimpleCalculatorImpl secondCalculator = new SimpleCalculatorImpl();
+    // setup
+    firstCalculator.insertDigit(1);
+    firstCalculator.insertPlus();
+    firstCalculator.insertDigit(2);
+    assertEquals("1+2", firstCalculator.output());
+
+    // save current state
+    Serializable savedState = firstCalculator.saveState();
+    assertNotNull(savedState);
+
+    // test
+    firstCalculator.clear();
+    secondCalculator.loadState(savedState);
+
+    // verify
+    assertEquals("1+2", secondCalculator.output());
+
+  }
+
+
 
   // TODO:
   //  the existing tests are not enough since they only test simple use-cases with small inputs.
