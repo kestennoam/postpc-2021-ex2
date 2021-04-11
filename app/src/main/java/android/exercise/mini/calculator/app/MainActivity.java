@@ -51,6 +51,12 @@ public class MainActivity extends AppCompatActivity {
             calculator.clear();
             renderTextViewCalculatorOutput();
         });
+        // deleteLast
+        findViewById(R.id.buttonBackSpace).setOnClickListener(v -> {
+            calculator.deleteLast();
+            renderTextViewCalculatorOutput();
+        });
+
         handleDigitButtonClick(R.id.button0, 0);
         handleDigitButtonClick(R.id.button1, 1);
         handleDigitButtonClick(R.id.button2, 2);
